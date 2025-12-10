@@ -1,38 +1,352 @@
-.App {
+/* App Container */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* Join Screen */
+.join-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.join-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-section {
   text-align: center;
+  margin-bottom: 32px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logo-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.logo-section h1 {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.logo-section p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Room Info */
+.room-info {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item .label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+.info-item .value {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* Join Button */
+.join-button {
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.join-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.join-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  font-size: 20px;
+}
+
+/* Features */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.feature {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.feature span:first-child {
+  font-size: 24px;
+  opacity: 0.8;
+}
+
+/* LiveKit Room Styles */
+.livekit-room {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Override some LiveKit default styles for better appearance */
+.lk-video-conference {
+  height: 100vh !important;
+  overflow: hidden;
+}
+
+/* Fix control bar visibility - white text on dark background */
+.lk-control-bar {
+  background: rgba(30, 30, 40, 0.95) !important;
+  backdrop-filter: blur(10px);
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+  padding: 12px 20px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Make control bar buttons visible */
+.lk-control-bar .lk-button {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.lk-control-bar .lk-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.lk-control-bar .lk-button[data-lk-enabled="false"] {
+  background: rgba(239, 68, 68, 0.3) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+/* Fix button text visibility */
+.lk-control-bar .lk-button-group-menu-item,
+.lk-control-bar span,
+.lk-control-bar label {
+  color: #ffffff !important;
+}
+
+/* Ensure video grid doesn't overflow */
+.lk-grid-layout {
+  height: calc(100vh - 80px) !important;
+  padding-bottom: 80px !important;
+}
+
+/* Fix focus ring layout */
+.lk-focus-layout {
+  height: calc(100vh - 80px) !important;
+  padding-bottom: 80px !important;
+}
+
+/* Username Input */
+.input-section {
+  margin-bottom: 20px;
+}
+
+.input-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.username-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.username-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.username-input:focus {
+  border-color: #667eea;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.username-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error-message {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: #fca5a5;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Disabled Button */
+.join-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Help Text */
+.help-text {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.help-text p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Custom Video Conference */
+.custom-video-conference {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-video-conference .lk-video-conference {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* End Call Button Container */
+.end-call-container {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.end-call-button {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
 }
 
-.App-link {
-  color: #61dafb;
+.end-call-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 30px rgba(239, 68, 68, 0.5);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.end-call-button:active {
+  transform: scale(0.98);
+}
+
+.end-call-icon {
+  font-size: 18px;
+  transform: rotate(135deg);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .join-card {
+    padding: 32px 24px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .logo-section h1 {
+    font-size: 24px;
+  }
+
+  .features {
+    gap: 16px;
   }
 }
