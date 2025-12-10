@@ -44,27 +44,27 @@ function App() {
   const wsUrl = 'wss://livekit.simarjeet.dev';
   const roomName = 'test-room';
 
-  // Generate a token for the user (you'll need a token server in production)
-  // For testing, we'll use a simple approach with pre-generated tokens
+  // Generate a token for the user
   const generateToken = async (identity) => {
-    // In production, you would call your backend API to generate a token
-    // For now, we'll use the LiveKit CLI or a simple token server
+    // Determine the API URL based on environment
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const tokenUrl = isLocalhost 
+      ? `http://localhost:7881/token?identity=${encodeURIComponent(identity)}&room=${roomName}`
+      : `/api/token?identity=${encodeURIComponent(identity)}&room=${roomName}`;
     
-    // Option 1: If you have a token server running locally
     try {
-      const response = await fetch(`http://localhost:7881/token?identity=${encodeURIComponent(identity)}&room=${roomName}`);
+      const response = await fetch(tokenUrl);
       if (response.ok) {
         const data = await response.json();
         return data.token;
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get token');
       }
     } catch (e) {
-      console.log('Token server not available, using fallback');
+      console.error('Token generation error:', e);
+      throw e;
     }
-
-    // Option 2: Fallback - For testing only, use the existing token
-    // Note: This won't work for multiple users as each user needs a unique token
-    // You'll need to generate tokens using: livekit-cli create-token --api-key <key> --api-secret <secret> --identity <username> --room my-first-room --join
-    return null;
   };
 
   const handleJoin = async () => {
@@ -78,16 +78,10 @@ function App() {
 
     try {
       const generatedToken = await generateToken(username.trim());
-      
-      if (generatedToken) {
-        setToken(generatedToken);
-        setConnected(true);
-      } else {
-        // Fallback: Show instructions for generating tokens
-        setError('Token server not running. Please generate a token using LiveKit CLI:\n\nlivekit-cli create-token --api-key YOUR_API_KEY --api-secret YOUR_API_SECRET --identity "' + username + '" --room ' + roomName + ' --join');
-      }
+      setToken(generatedToken);
+      setConnected(true);
     } catch (err) {
-      setError('Failed to get token. Please check the console for details.');
+      setError(err.message || 'Failed to connect. Please try again.');
       console.error(err);
     } finally {
       setIsLoading(false);
