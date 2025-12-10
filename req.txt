@@ -1,0 +1,4 @@
+[x] multiple users can join the call
+[] extracting the transcription
+[] record the session
+[] audio extraction (for session processor)
