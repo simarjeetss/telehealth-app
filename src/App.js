@@ -13,19 +13,125 @@ import '@livekit/components-styles';
 import { Track } from 'livekit-client';
 import './App.css';
 
-// Custom video conference component with end call button
-function CustomVideoConference({ onEndCall }) {
+// Custom video conference component with end call and recording buttons
+function CustomVideoConference({ onEndCall, roomName }) {
   const room = useRoomContext();
+  const [isRecording, setIsRecording] = useState(false);
+  const [egressId, setEgressId] = useState(null);
+  const [recordingError, setRecordingError] = useState('');
+  const [recordingLoading, setRecordingLoading] = useState(false);
+
+  const getApiUrl = (action, params = {}) => {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const baseUrl = isLocalhost ? 'http://localhost:7881' : '';
+    const queryParams = new URLSearchParams({ action, ...params }).toString();
+    return `${baseUrl}/api/recording?${queryParams}`;
+  };
+
+  const handleStartRecording = useCallback(async () => {
+    setRecordingLoading(true);
+    setRecordingError('');
+    
+    try {
+      const response = await fetch(getApiUrl('start', { room: roomName }), {
+        method: 'POST',
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setEgressId(data.egressId);
+        setIsRecording(true);
+        console.log('Recording started:', data.egressId);
+      } else {
+        throw new Error(data.error || 'Failed to start recording');
+      }
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      setRecordingError(error.message);
+    } finally {
+      setRecordingLoading(false);
+    }
+  }, [roomName]);
+
+  const handleStopRecording = useCallback(async () => {
+    if (!egressId) return;
+    
+    setRecordingLoading(true);
+    setRecordingError('');
+    
+    try {
+      const response = await fetch(getApiUrl('stop', { egressId }), {
+        method: 'POST',
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setIsRecording(false);
+        setEgressId(null);
+        console.log('Recording stopped');
+      } else {
+        throw new Error(data.error || 'Failed to stop recording');
+      }
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+      setRecordingError(error.message);
+    } finally {
+      setRecordingLoading(false);
+    }
+  }, [egressId]);
 
   const handleEndCall = useCallback(() => {
+    // Stop recording if active before ending call
+    if (isRecording && egressId) {
+      handleStopRecording();
+    }
     room.disconnect();
     onEndCall();
-  }, [room, onEndCall]);
+  }, [room, onEndCall, isRecording, egressId, handleStopRecording]);
 
   return (
     <div className="custom-video-conference">
       <VideoConference />
-      <div className="end-call-container">
+      
+      {/* Recording indicator */}
+      {isRecording && (
+        <div className="recording-indicator">
+          <span className="recording-dot"></span>
+          REC
+        </div>
+      )}
+      
+      {/* Recording error toast */}
+      {recordingError && (
+        <div className="recording-error">
+          {recordingError}
+          <button onClick={() => setRecordingError('')}>×</button>
+        </div>
+      )}
+      
+      <div className="call-controls-container">
+        {/* Recording button */}
+        <button 
+          className={`recording-button ${isRecording ? 'recording-active' : ''}`}
+          onClick={isRecording ? handleStopRecording : handleStartRecording}
+          disabled={recordingLoading}
+        >
+          {recordingLoading ? (
+            <span className="recording-button-text">...</span>
+          ) : isRecording ? (
+            <>
+              <span className="stop-icon">■</span>
+              <span className="recording-button-text">Stop Recording</span>
+            </>
+          ) : (
+            <>
+              <span className="record-icon">●</span>
+              <span className="recording-button-text">Start Recording</span>
+            </>
+          )}
+        </button>
+        
+        {/* End call button */}
         <button className="end-call-button" onClick={handleEndCall}>
           End Call
         </button>
@@ -163,12 +269,12 @@ function App() {
           serverUrl={wsUrl}
           token={token}
           connect={true}
-          audio={true}
-          video={true}
+          audio={false}
+          video={false}
           onDisconnected={handleDisconnect}
           className="livekit-room"
         >
-          <CustomVideoConference onEndCall={handleDisconnect} />
+          <CustomVideoConference onEndCall={handleDisconnect} roomName={roomName} />
           <RoomAudioRenderer />
         </LiveKitRoom>
       )}
