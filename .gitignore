@@ -26,3 +26,5 @@ yarn-error.log*
 creds.txt
 .env
 env
+
+req.txt
